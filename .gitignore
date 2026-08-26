@@ -1,0 +1,104 @@
+# =====================================================================
+# ALLOWLIST. Everything is ignored by default; a file is tracked only if
+# a rule below explicitly re-includes it. This is deliberate: the project
+# directory holds roughly 30 GB of pipeline output and h5ads, and a
+# denylist would eventually miss something.
+#
+# To track a new kind of file, add a "!" rule in the SOURCE section.
+# To check what a rule does before committing:
+#     git status --short
+#     git add -A --dry-run
+# =====================================================================
+*
+!*/
+
+# --------------------------------------------------------------- source
+!*.py
+!*.smk
+!*.sh
+!*.sbatch
+!*.yaml
+!*.yml
+!*.md
+!.gitignore
+# the tracked-file manifest read by git-add-listed.sh. NB gitignore has no
+# inline comments: a trailing "#" becomes part of the pattern and the rule
+# then matches nothing, so keep comments on their own line.
+!git-files.txt
+!snakefile
+!snakefile_*
+!Snakefile
+
+# ------------------------------------------------------------ notebooks
+!*.ipynb
+
+# ----------------------------------- small tables the pipeline reads in
+!csvs/sample_metadata.csv
+!csvs/xgen_metadata.csv
+!csvs/hifi_locations.csv
+!csvs/hifi_locations_xgen.csv
+!csvs/hifi_locations_2samples.csv
+!csvs/popv_to_ts_celltype_mapping.csv
+!manuscript/figure_panel_map_REVIEW.csv
+
+# =====================================================================
+# HARD EXCLUDES
+# These come after "!*/" on purpose. Re-ignoring the directory stops git
+# descending into it at all, which matters on Lustre: without this every
+# `git status` walks ~30 GB and takes minutes.
+# =====================================================================
+.snakemake/
+**/.snakemake/
+**/.ipynb_checkpoints/
+logs/
+**/logs/
+**/slurm_logs/
+**/benchmarks/
+**/work_directory/
+
+# ---------------------------------------------------- pipeline outputs
+pacbio*/barcodes/
+pacbio*/cdkn2a_bams/
+pacbio*/dedup*/
+pacbio*/h5ads/
+pacbio*/isoseq/
+pacbio*/lima/
+pacbio*/pbmm2/
+pacbio*/phasing/
+pacbio*/phasing_withSR/
+pacbio*/pigeon/
+pacbio*/popv_results/
+pacbio*/raw_bams/
+pacbio*/recollapsed*/
+pacbio*/skera/
+pacbio*/sqanti3/
+*_junction_validation/star_index/
+*_junction_validation/starsolo/
+
+# ---------------------------------------------------- analysis outputs
+csvs/*/
+notebooks/figures/
+notebooks/sr_umi_molecules/
+notebooks/.fmt_backup_*/
+
+# ------------------------------------- generated manuscript artefacts
+# draft_full.* are assembled by make_full_html.py from the tracked
+# sources, and the html is 14 MB of base64 images.
+manuscript/draft_full.html
+manuscript/draft_full.md
+manuscript/figure_images/
+manuscript/.refs_crossref.json
+manuscript/references_zotero.ris
+manuscript/references_zotero.csl.json
+
+# =====================================================================
+# SECRETS. Never commit these.
+# =====================================================================
+zotero_key.txt
+**/zotero_key.txt
+*.key
+*.pem
+*_token
+*_secret
+.env
+.netrc

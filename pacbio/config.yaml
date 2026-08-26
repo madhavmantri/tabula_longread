@@ -1,0 +1,393 @@
+# Reference genome information
+reference_genome: "/oak/stanford/groups/quake/mmantri/group.quake/references/gencode_GRCh38.p13_release41/GRCh38.primary_assembly.genome.fa"
+reference_gtf: "/oak/stanford/groups/quake/mmantri/group.quake/references/gencode_GRCh38.p13_release41/gencode.v41.annotation.gtf"
+
+# Extra files
+primer_fasta: "/oak/stanford/groups/quake/mmantri/group.quake/tabula_longread/pacbio/MAS-Seq_Adapter_v1/mas16_primers.fasta"
+
+# Input paths
+raw_data_directory: "/oak/stanford/groups/quake/shared/pacbio_raw/"
+work_directory: "/oak/stanford/groups/quake/mmantri/group.quake/tabula_longread/pacbio/"
+
+# CSV listing the HiFi sample locations (one row per tissue).
+# Columns: tissue,hifi_dir   (hifi_dir = per-tissue directory containing .bam files)
+# Add new tissues from other roots here. Tissue names must be unique.
+hifi_locations_csv: "/oak/stanford/groups/quake/mmantri/group.quake/tabula_longread/csvs/hifi_locations.csv"
+
+# Sample sheet (tube_id,donor,...) used by syncronize.smk to resolve exclude_donor
+# -> tube_id. Defaults to the regular Tabula Sapiens sample metadata.
+sample_metadata_csv: "/oak/stanford/groups/quake/mmantri/group.quake/tabula_longread/csvs/sample_metadata.csv"
+
+# Subfolder under work_directory to save recollapsed results and to use for squanti3 pipeline
+# e.g. "recollapsed", "recollapsed_samplelist1", "recollapsed_samplelist2"
+recollapsed_directory: "recollapsed"
+
+# Tool paths
+isoannotlite_script: "/oak/stanford/groups/quake/mmantri/mydata/tools/SQANTI3_v6.0.1_patched/src/utilities/IsoAnnotLite_SQ3.py"
+sqanti3_qc_script: "/oak/stanford/groups/quake/mmantri/mydata/tools/SQANTI3_v6.0.1_patched/sqanti3_qc.py"
+sqanti3_filter_script: "/oak/stanford/groups/quake/mmantri/mydata/tools/SQANTI3_v6.0.1_patched/sqanti3_filter.py"
+
+# SQANTI3 annotation files
+cage_peak: "/oak/stanford/groups/quake/mmantri/mydata/tools/SQANTI3_v5.5.4/data/ref_TSS_annotation/human.refTSS_v3.1.hg38.bed"
+polyA_motif_list: "/oak/stanford/groups/quake/mmantri/mydata/tools/SQANTI3_v5.5.4/data/polyA_motifs/mouse_and_human.polyA_motif.txt"
+# PolyA-site reference (BED of known polyadenylation sites). Enables SQANTI3
+# within_polyA_site / dist_to_polyA_site (3' end vs known polyA site). Built from the
+# GENCODE v41 PolyA feature annotation (polyA_site features -> BED6, chr-named, matches
+# the reference). Comment out to skip (only polyA MOTIF scanning runs then).
+polyA_peak: "/oak/stanford/groups/quake/mmantri/group.quake/references/gencode_GRCh38.p13_release41/gencode.v41.polyA_sites.bed"
+
+# Subsampling
+max_reads_per_barcode: 200000
+# Tissues that take the per-barcode subsample path before groupdedup (cap =
+# max_reads_per_barcode). Empty = subsampling OFF for all tissues (groupdedup
+# runs on the full sorted BAM). List the 4 tissue IDs to subsample here, e.g.
+subsample_tissues: [T4, T13, T21, T22, T27, T52]
+
+# Percentile cutoff for isoseq correct + bcstats real-cell calling
+# (cutoff = UMI count at top (100-P)% rank × 10; barcodes with UMIs >= cutoff are real cells)
+percentile_cutoff: 90
+
+# Optional parameters
+keep_novel_genes: false
+keep_ribo_mito_genes: false
+
+# Optional (recollapsed pipeline): also run `pigeon filter --mono-exon` (drops mono-exonic
+# transcripts) and build a separate Seurat matrix from it. Outputs go to
+# {recollapsed_directory}/classify_monoexon/ and {recollapsed_directory}/seurat_monoexon/,
+# leaving the default (mono-exon-kept) filter + seurat untouched. Override at launch with
+# --config mono_exon_seurat=True.
+mono_exon_seurat: True
+
+# Group dedup split defaults
+barcode_tag: "CB"        
+
+# SLURM resource defaults
+threads: 32
+default_memory: "150G"
+partition: "owners"
+time: "6:00:00"
+slurm_extra: ""
+
+# Rule-specific resource overrides
+check_bam_eof:
+    mem: "8G"
+    time: "0:30:00"
+    threads: 1
+    partition: "owners"
+
+merge_segmented:
+    mem: "32G"
+    time: "2:00:00"
+    threads: 8
+    partition: "owners"
+
+lima_remove_primers:
+    mem: "32G"
+    time: "4:00:00"
+    threads: 32
+    partition: "owners"
+
+isoseq_tag:
+    mem: "32G"
+    time: "4:00:00"
+    threads: 32
+    partition: "owners"
+
+isoseq_refine:
+    mem: "32G"
+    time: "4:00:00"
+    threads: 32
+    partition: "owners"
+
+isoseq_correct:
+    mem: "64G"
+    time: "1-00:00:00"
+    threads: 32
+    partition: "owners"
+
+samtools_sort_by_barcode:
+    mem: "64G"
+    time: "4:00:00"
+    threads: 32
+    partition: "owners"
+
+isoseq_bcstats:
+    mem: "32G"
+    time: "2:00:00"
+    threads: 32
+    partition: "owners"
+
+index_sorted_bam:
+    mem: "16G"
+    time: "1:00:00"
+    threads: 8
+    partition: "owners"
+
+pbindex_sorted_bam:
+    mem: "16G"
+    time: "1:00:00"
+    threads: 8
+    partition: "owners"
+
+isoseq_groupdedup:
+    mem: "200G"
+    time: "2-00:00:00"
+    threads: 64
+    partition: "owners"
+
+pbmm2_align:
+    mem: "150G"
+    time: "1-00:00:00"
+    threads: 32
+    partition: "owners"
+
+pbindex:
+    mem: "16G"
+    time: "2:00:00"
+    threads: 8
+    partition: "owners"
+
+isoseq_collapse:
+    mem: "500G"
+    time: "2-00:00:00"
+    threads: 32
+    partition: "owners"
+
+pigeon_index_gtf:
+    mem: "16G"
+    time: "2:00:00"
+    threads: 4
+    partition: "owners"
+
+index_fasta:
+    mem: "8G"
+    time: "0:30:00"
+    threads: 1
+    partition: "owners"
+
+pigeon_sort:
+    mem: "32G"
+    time: "2:00:00"
+    threads: 4
+    partition: "owners"
+
+pigeon_classify:
+    mem: "64G"
+    time: "4:00:00"
+    threads: 16
+    partition: "owners"
+
+pigeon_filter:
+    mem: "32G"
+    time: "2:00:00"
+    threads: 4
+    partition: "owners"
+
+run_IsoAnnotLite:
+    mem: "32G"
+    time: "2:00:00"
+    threads: 4
+    partition: "owners"
+
+pigeon_make_seurat:
+    mem: "64G"
+    time: "2:00:00"
+    threads: 8
+    partition: "owners"
+
+sqanti3_qc:
+    mem: "64G"
+    time: "6:00:00"
+    threads: 16
+    partition: "owners"
+
+sqanti3_filter:
+    mem: "64G"
+    time: "2:00:00"
+    threads: 16
+    partition: "owners"
+
+saturation_rarefaction:
+    mem: "64G"
+    time: "4:00:00"
+    threads: 32
+    partition: "owners"
+
+# ── Sharded groupdedup (pacbio_xgen/groupdedup_sharded.smk) ────────────────────
+plan_shards:
+    mem: "64G"
+    time: "2:00:00"
+    threads: 1
+    partition: "owners"
+
+split_bam_shards:
+    mem: "64G"
+    time: "6:00:00"
+    threads: 32
+    partition: "owners"
+
+isoseq_groupdedup_shard:
+    mem: "64G"
+    time: "1-00:00:00"
+    threads: 32
+    partition: "owners"
+
+merge_dedup_shards:
+    mem: "128G"
+    time: "4:00:00"
+    threads: 16
+    partition: "owners"
+
+# ════════════════════════════════════════════════════════════════════════════════
+# Phasing — shared
+# ════════════════════════════════════════════════════════════════════════════════
+# Donor to phase (tissues auto-detected from sample_metadata.csv). Read by BOTH
+# phasing_withSR.smk and phasing.smk.
+phasing_donor: "TSP33"
+# phasing_tissues: "T3,T4,T5"        # optional explicit override of the tissue list
+
+# ════════════════════════════════════════════════════════════════════════════════
+# phasing_withSR.smk — short-read-based phasing (GATK variant calling → WhatsHap)
+# ════════════════════════════════════════════════════════════════════════════════
+# Provide ONE of:
+#   input_vcf:      path to a pre-called het-SNP VCF (bgzipped) — skips GATK
+#   short_read_bam: path to a short-read WGS/WES DNA BAM — variants called with GATK
+# input_vcf: "/path/to/donor_hets.vcf.gz"
+# short_read_bam: "/path/to/donor.wgs.bam"
+
+# Output root for the short-read pipeline (under work_directory)
+phasing_withSR_dir: "phasing_withSR"
+
+# Rule-specific resource overrides for phasing_withSR.smk
+phasing_withSR_resources:
+    gatk_haplotype_caller:
+        mem: "200G"
+        time: "1-00:00:00"
+        threads: 32
+        partition: "owners"
+    gatk_genotype_gvcfs:
+        mem: "64G"
+        time: "8:00:00"
+        threads: 8
+        partition: "owners"
+    filter_het_snps:
+        mem: "32G"
+        time: "2:00:00"
+        threads: 4
+        partition: "owners"
+    whatshap_phase:
+        mem: "200G"
+        time: "1-00:00:00"
+        threads: 8
+        partition: "owners"
+    whatshap_stats:
+        mem: "32G"
+        time: "2:00:00"
+        threads: 1
+        partition: "owners"
+    whatshap_haplotag:
+        mem: "100G"
+        time: "8:00:00"
+        threads: 8
+        partition: "owners"
+    index_haplotagged_bam:
+        mem: "16G"
+        time: "1:00:00"
+        threads: 8
+        partition: "owners"
+
+# ════════════════════════════════════════════════════════════════════════════════
+# phasing.smk — long-read-only phasing (no short reads)
+# ════════════════════════════════════════════════════════════════════════════════
+# Output root for the long-read pipeline (under work_directory)
+phasing_dir: "phasing"
+
+# Variant caller for the WhatsHap branch: "mpileup" (default) or "clair3_rna"
+lr_variant_caller: "clair3_rna"
+
+# het-SNP calling/filtering. NOTE: lr_min_dp/lr_min_qual/lr_ab_* apply to the het FILTER
+# for BOTH callers (mpileup and clair3_rna), not just mpileup. lr_min_mapq/baseq/max_depth
+# are mpileup-only. (defaults shown; uncomment to override)
+# lr_min_mapq: 20
+# lr_min_baseq: 10
+# lr_max_depth: 10000
+# lr_min_dp: 10
+# Clair3-RNA QUAL is NOT phred-scaled (real PASS variants ~10-20), so the mpileup-era
+# default of 20 discards ~99.9% of clair3 hets. Use ~10 for clair3_rna.
+lr_min_qual: 10
+# lr_ab_min: 0.25
+# lr_ab_max: 0.75
+# lr_exclude_rna_editing: false      # drop A>G / T>C (ADAR signature) from the het set
+
+# Clair3-RNA (used when lr_variant_caller: "clair3_rna")
+clair3_rna_bin: "/oak/stanford/groups/quake/mmantri/mydata/tools/Clair3-RNA/run_clair3_rna"
+clair3_rna_platform: "hifi_mas_pbmm2"       # PacBio Revio MAS-Seq, pbmm2-aligned
+# clair3_rna_pileup_model_path: ""           # optional -P override; auto-located from platform if unset
+clair3_rna_tag_rnaediting: true              # tag + drop REDIportal RNA-editing sites (GRCh38)
+
+# cDNA_Cupcake IsoPhase (separate `all_isophase` target)
+isophase_scripts_dir: "/oak/stanford/groups/quake/mmantri/mydata/tools/cDNA_Cupcake/phasing"
+isophase_min_coverage: 40
+# IsoPhase target genes — leave BOTH unset to run transcriptome-wide (slow at single-cell
+# scale). Set one to restrict to specific genes (resolved to PB loci via pigeon
+# classification, then FLNC/gff/read_stat are subset so it runs in minutes):
+#   isophase_genes: "CDKN2A,TPM1,MYL6"        # comma-separated gene symbols, or
+#   isophase_gene_list: "/path/to/genes.txt"  # file, one gene symbol per line
+
+# Conda environments (activated per rule via shell.prefix)
+conda_sh: "/home/groups/quake/mmantri/miniconda3/etc/profile.d/conda.sh"
+phasing_conda_env: "isophase"                # mpileup + IsoPhase + WhatsHap downstream
+clair3_rna_conda_env: "clair3_rna"           # Clair3-RNA caller rule only
+
+# Rule-specific resource overrides for phasing.smk (long-read-only)
+phasing_resources:
+    merge_lr_pooled_bam:
+        mem: "200G"
+        time: "12:00:00"
+        threads: 16
+        partition: "quake"
+    lr_call_variants:                        # mpileup branch
+        mem: "96G"
+        time: "2-00:00:00"
+        threads: 16
+        partition: "quake"
+    clair3_rna_call_variants:                # clair3_rna branch
+        mem: "128G"
+        time: "2-00:00:00"
+        threads: 24
+        partition: "quake"
+    lr_filter_het_snps:
+        mem: "32G"
+        time: "2:00:00"
+        threads: 4
+        partition: "quake"
+    whatshap_phase:
+        mem: "200G"
+        time: "1-00:00:00"
+        threads: 8
+        partition: "quake"
+    whatshap_stats:
+        mem: "32G"
+        time: "2:00:00"
+        threads: 1
+        partition: "quake"
+    whatshap_haplotag:                       # per-tissue (22 jobs) -> owners
+        mem: "100G"
+        time: "8:00:00"
+        threads: 8
+        partition: "owners"
+    index_haplotagged_bam:                   # per-tissue (22 jobs) -> owners
+        mem: "16G"
+        time: "1:00:00"
+        threads: 8
+        partition: "owners"
+    prepare_isophase_inputs:                 # IsoPhase branch (full or gene-subset inputs)
+        mem: "32G"
+        time: "12:00:00"
+        threads: 8
+        partition: "quake"
+    isophase_run:                            # IsoPhase branch
+        mem: "100G"
+        time: "1-00:00:00"
+        threads: 16
+        partition: "quake"
