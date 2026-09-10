@@ -4,19 +4,22 @@ Snakemake pipelines for PacBio MAS-Seq / Iso-Seq single-cell long-read
 transcriptomics, as used to build a cross-tissue single-cell isoform atlas and a
 CDKN2A-targeted capture dataset.
 
-Two pipelines are published here:
+Two pipelines and the analysis notebooks behind the manuscript are published
+here:
 
 | Directory | Purpose |
 |---|---|
 | [`pacbio/`](pacbio) | Whole-transcriptome Iso-Seq: raw HiFi reads to per-sample transcript models, cross-sample identifier harmonization, SQANTI3 annotation and Seurat count matrices |
 | [`pacbio_xgen/`](pacbio_xgen) | The same pipeline adapted for CDKN2A-targeted hybridization capture, where the barcode depth distribution is heavy-tailed enough that deduplication has to be sharded |
+| [`notebooks_manuscript/`](notebooks_manuscript) | Downstream analysis: the notebooks that build the atlas objects from the pipeline outputs and produce every figure panel in the manuscript |
 
 ## Scope of this repository
 
-**This repository contains pipeline code only.** Sequencing data, intermediate
-BAMs, count matrices, h5ad objects, analysis notebooks, figures and manuscript
-sources are not included. Paths in the config files point at locations on the
-cluster where the pipelines were run and will need to be repointed before use.
+**This repository contains code only** — the two pipelines and the analysis
+notebooks. Sequencing data, intermediate BAMs, count matrices, h5ad objects,
+rendered figures and manuscript sources are not included. Paths in the config
+files and in the notebooks point at locations on the cluster where the work was
+run and will need to be repointed before use.
 
 ## `pacbio/` — whole-transcriptome Iso-Seq
 
@@ -107,3 +110,44 @@ cd pacbio && ./pacbio_isoseq.sh
 
 Reference genome, annotation, primer FASTA and barcode whitelist paths are all
 set in `config.yaml`.
+
+## `notebooks_manuscript/` — downstream analysis
+
+The 39 notebooks on the manuscript critical path, together with the eight
+helper modules that ship with them. A notebook is included if it produces a
+figure panel used in the manuscript, or if it writes an object or table that
+such a notebook reads; exploratory and QC notebooks from the working tree are
+not published. Cell outputs are kept, so each notebook can be read as a record
+of what was run without re-executing it.
+
+| Directory | Notebooks | Contents |
+|---|---|---|
+| `01_atlas_construction/` | 10 | Per-sample Seurat matrices to merged, filtered, cell-type-labelled AnnData objects at four feature levels |
+| `02_atlas_overview/` | 3 | Atlas composition, per-cell quality metrics, and comparison against matched short-read data |
+| `03_isoform_splicing_landscape/` | 7 | Novel isoform catalogue, splicing events, coding and NMD status, UTR diversity, junction validation |
+| `04_isoform_diversity_and_identity/` | 9 | Isoforms per gene, isoform diversity and specificity metrics, differential isoform usage across cell types |
+| `05_celltype_vs_tissue/` | 1 | Variance partition of isoform usage between cell type and tissue |
+| `06_senescence/` | 9 | CDKN2A isoform structure and the p16-positive senescence programme |
+
+The helper modules sit in the tree root rather than beside the notebooks. Each
+notebook opens by walking up the directory tree to a marker file and changing
+directory to the root, which is what places the helpers on the import path and
+makes the relative paths to the pipeline outputs resolve from any depth.
+
+```
+figure_paths.py                 maps a figure basename to its manuscript panel directory
+add_classification.py           merge pigeon or SQANTI3 classification into an AnnData
+isoform_fraction.py             per-gene isoform fraction layer
+differential_isoform_fraction.py  differential isoform usage, including the
+                                  Dirichlet-multinomial gene-level test
+senescence_robustness.py        depth matching and robustness checks for the senescence analysis
+pyVolcano.py                    volcano plots
+TS_colorDict.py                 colour palettes for tissue, donor, compartment,
+                                assay, sex and structural category
+mm_process_adata_for_sags.py    leave-one-donor-out and per-donor differential
+                                expression for senescence-associated genes
+```
+
+The notebooks read the count matrices and classification tables written by the
+pipelines above, so they are not runnable from a clone alone; they are published
+as the record of how the reported numbers and panels were produced.
