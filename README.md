@@ -158,9 +158,16 @@ The pipelines are written for a SLURM cluster and were run on CentOS Linux 7.9.
 Paths in the config files are absolute paths on the cluster where the work was
 done, so repoint them before running.
 
-1. **Create the environment.** `conda env create -f pacbio/pacbio.yml`, then
-   `conda activate pacbio`. SQANTI3 is installed separately; the manuscript used
-   SQANTI3 v6.0.1.
+1. **Create the environments.** The environment files pin the exact versions
+   used for the manuscript.
+   - `conda env create -f pacbio/pacbio.yml`: the pipeline (Snakemake, pbskera,
+     lima, isoseq, pbmm2, pigeon, samtools). `pacbio_isoseq.sh` and
+     `pacbio_syncronize.sh` activate it as `pacbio`.
+   - `conda env create -f envs/sqanti3.yml`: the dependencies of SQANTI3 v6.0.1,
+     which `pacbio_sqanti3.sh` activates as `sqanti3`. SQANTI3 itself is not a
+     conda package: install v6.0.1 from its repository and point the
+     `sqanti3_qc_script`, `sqanti3_filter_script` and `isoannotlite_script` keys
+     in `pacbio/config.yaml` at it.
 2. **List your samples.** Write a CSV with columns `tissue,hifi_dir`, one row per
    sample. `tissue` is the sample identifier used in every output path, and
    `hifi_dir` is the directory holding that sample's HiFi BAMs. Every
@@ -219,6 +226,8 @@ To re-run notebooks, start from the deposited data:
 ```bash
 git clone https://github.com/madhavmantri/tabula_longread.git
 cd tabula_longread
+conda env create -f envs/analysis.yml      # notebooks and build_from_figshare.py
+conda activate analysis
 mkdir -p pacbio/h5ads csvs
 # put the three *_preprocessed.h5ad files from Figshare in pacbio/h5ads/
 # and the other Figshare files (CSVs, GTF, BED) in csvs/
@@ -228,6 +237,10 @@ touch notebooks_manuscript/.notebooks_root
 The lookup tables the notebooks read (`csvs/popv_to_ts_celltype_mapping.csv`,
 `csvs/ts_celltypes.csv` and `csvs/transcripts_to_genes_with_biotypes.txt`)
 ship with this repository.
+
+`envs/popv.yml` is the environment for the cell-type annotation notebook
+(`01_atlas_construction/01_07_popv_python3.11.ipynb`); every other notebook runs
+in `envs/analysis.yml`.
 
 Every notebook starts by walking up the directory tree to the
 `.notebooks_root` marker and changing directory there. This makes relative
