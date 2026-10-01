@@ -1,0 +1,181 @@
+cell_ontology_class,broad_cell_class,broader_cell_class,compartment
+"naive thymus-derived cd4-positive, alpha-beta t cell",t cell,t cell,Immune
+b cell,lymphocyte of b lineage,lymphocyte of b lineage,Immune
+"cd8-positive, alpha-beta t cell",t cell,t cell,Immune
+"cd4-positive, alpha-beta t cell",t cell,t cell,Immune
+plasma cell,lymphocyte of b lineage,lymphocyte of b lineage,Immune
+innate lymphoid cell,innate lymphoid cell,innate lymphoid cell,Immune
+endothelial cell,endothelial cell,endothelial cell,Endothelium
+natural killer cell,innate lymphoid cell,innate lymphoid cell,Immune
+erythrocyte,erythroid lineage cell,erythroid lineage cell,Immune
+myeloid dendritic cell,dendritic cell,dendritic cell,Immune
+"cd8-positive, alpha-beta thymocyte",t cell,t cell,Immune
+vascular associated smooth muscle cell,contractile cell,contractile cell,Stromal
+neutrophil,granulocyte,granulocyte,Immune
+vein endothelial cell,endothelial cell,endothelial cell,Endothelium
+intrahepatic cholangiocyte,duct epithelial cell,epithelial cell,Epithelium
+myeloid cell,hematopoietic cell,hematopoietic cell,Immune
+macrophage,myeloid leukocyte,myeloid leukocyte,Immune
+regular atrial cardiac myocyte,contractile cell,contractile cell,Stromal
+smooth muscle cell,contractile cell,contractile cell,Stromal
+cardiac endothelial cell,cardiac endothelial cell,endothelial cell,Endothelium
+pericyte,contractile cell,contractile cell,Stromal
+mesothelial cell,meso-epithelial cell,epithelial cell,Epithelium
+endothelial cell of artery,endothelial cell,endothelial cell,Endothelium
+non-classical monocyte,myeloid leukocyte,myeloid leukocyte,Immune
+classical monocyte,myeloid leukocyte,myeloid leukocyte,Immune
+respiratory goblet cell,glandular epithelial cell,epithelial cell,Epithelium
+basal cell,epithelial cell,epithelial cell,Epithelium
+type ii pneumocyte,epithelial cell of lung,epithelial cell,Epithelium
+mesenchymal stem cell,stem cell,stem cell,Stromal
+skeletal muscle satellite stem cell,stem cell,stem cell,Stromal
+tendon cell,stromal cell,stromal cell,Stromal
+t cell,t cell,t cell,Immune
+capillary endothelial cell,endothelial cell,endothelial cell,Endothelium
+mature nk t cell,t cell,t cell,Immune
+regulatory t cell,t cell,t cell,Immune
+keratocyte,fibroblast,fibroblast,Stromal
+fast muscle cell,contractile cell,contractile cell,Stromal
+endothelial cell of lymphatic vessel,endothelial cell,endothelial cell,Endothelium
+slow muscle cell,contractile cell,contractile cell,Stromal
+endothelial cell of vascular tree,endothelial cell,endothelial cell,Endothelium
+monocyte,myeloid leukocyte,myeloid leukocyte,Immune
+erythroid progenitor cell,stem cell,stem cell,Immune
+hematopoietic stem cell,stem cell,stem cell,Immune
+epithelial cell of uterus,endo-epithelial cell,epithelial cell,Epithelium
+fibroblast,fibroblast,fibroblast,Stromal
+ciliated epithelial cell,ciliated epithelial cell,epithelial cell,Epithelium
+epithelial fate stem cell,stem cell,stem cell,Epithelium
+leukocyte,hematopoietic cell,hematopoietic cell,Immune
+"activated cd4-positive, alpha-beta t cell",t cell,t cell,Immune
+mast cell,granulocyte,granulocyte,Immune
+theca cell,stromal cell,stromal cell,Stromal
+stromal cell,stromal cell,stromal cell,Stromal
+oocyte,female germ cell,female germ cell,Germline
+type i pneumocyte,epithelial cell of lung,epithelial cell,Epithelium
+alveolar type 2 fibroblast cell,fibroblast,fibroblast,Stromal
+lung ciliated cell,ciliated epithelial cell,epithelial cell,Epithelium
+club cell,endo-epithelial cell,epithelial cell,Epithelium
+bronchial smooth muscle cell,contractile cell,contractile cell,Stromal
+granulocyte,granulocyte,granulocyte,Immune
+common myeloid progenitor,stem cell,stem cell,Immune
+epithelial cell,epithelial cell,epithelial cell,Epithelium
+salivary gland cell,glandular epithelial cell,epithelial cell,Epithelium
+mural cell,contractile cell,contractile cell,Stromal
+fibroblast of breast,fibroblast,fibroblast,Stromal
+adventitial cell,adventitial cell,stromal cell,Stromal
+stratified squamous epithelial cell,stratified epithelial cell,epithelial cell,Epithelium
+tongue muscle cell,contractile cell,contractile cell,Stromal
+thymocyte,t cell,t cell,Immune
+medullary thymic epithelial cell,endo-epithelial cell,epithelial cell,Epithelium
+myofibroblast cell,contractile cell,contractile cell,Stromal
+luminal cell of prostate epithelium,endo-epithelial cell,epithelial cell,Epithelium
+basal cell of prostate epithelium,stem cell,stem cell,Epithelium
+acinar cell,glandular epithelial cell,epithelial cell,Epithelium
+fat cell,fat cell,fat cell,Stromal
+conjunctival epithelial cell,conjunctival epithelial cell,epithelial cell,Epithelium
+platelet,hematopoietic cell,hematopoietic cell,Immune
+duct epithelial cell,duct epithelial cell,epithelial cell,Epithelium
+acinar cell of salivary gland,glandular epithelial cell,epithelial cell,Epithelium
+myoepithelial cell,meso-epithelial cell,epithelial cell,Epithelium
+ionocyte,epithelial cell,epithelial cell,Epithelium
+tissue-resident macrophage,myeloid leukocyte,myeloid leukocyte,Immune
+basophil,granulocyte,granulocyte,Immune
+sebum secreting cell,secretory cell,secretory cell,Epithelium
+melanocyte,melanocyte,stromal cell,Stromal
+"cd4-positive, alpha-beta thymocyte",t cell,t cell,Immune
+schwann cell,glial cell,stromal cell,Stromal
+microglial cell,myeloid leukocyte,myeloid leukocyte,Immune
+eye photoreceptor cell,neuron,neuron,Neural
+intermediate monocyte,myeloid leukocyte,myeloid leukocyte,Immune
+enterocyte of epithelium of large intestine,intestinal epithelial cell,epithelial cell,Epithelium
+paneth cell of colon,intestinal epithelial cell,epithelial cell,Epithelium
+intestinal crypt stem cell of colon,stem cell,stem cell,Epithelium
+enteroglial cell,glial cell,stromal cell,Neural
+tuft cell of colon,intestinal epithelial cell,epithelial cell,Epithelium
+colon endothelial cell,endothelial cell,endothelial cell,Endothelium
+bladder urothelial cell,transitional epithelial cell,epithelial cell,Epithelium
+hepatocyte,hepatocyte,hepatocyte,Epithelium
+enterocyte of epithelium proper of small intestine,intestinal epithelial cell,epithelial cell,Epithelium
+paneth cell of epithelium of small intestine,intestinal epithelial cell,epithelial cell,Epithelium
+intestinal crypt stem cell of small intestine,stem cell,stem cell,Epithelium
+glandular epithelial cell,glandular epithelial cell,epithelial cell,Epithelium
+mueller cell,glial cell,stromal cell,Stromal
+retinal pigment epithelial cell,retinal pigment epithelial cell,epithelial cell,Epithelium
+mesenchymal stem cell of adipose tissue,stem cell,stem cell,Stromal
+colon macrophage,myeloid leukocyte,myeloid leukocyte,Immune
+gamma-delta t cell,t cell,t cell,Immune
+erythroid lineage cell,erythroid lineage cell,erythroid lineage cell,Immune
+small intestine goblet cell,intestinal epithelial cell,epithelial cell,Epithelium
+endothelial cell of arteriole,endothelial cell,endothelial cell,Endothelium
+intestinal tuft cell,endo-epithelial cell,epithelial cell,Epithelium
+retinal blood vessel endothelial cell,endothelial cell,endothelial cell,Endothelium
+corneal epithelial cell,ecto-epithelial cell,epithelial cell,Epithelium
+retinal bipolar neuron,neuron,neuron,Neural
+serous cell of epithelium of bronchus,secretory cell,secretory cell,Epithelium
+pulmonary ionocyte,epithelial cell,epithelial cell,Epithelium
+radial glial cell,stem cell,stem cell,Neural
+plasmacytoid dendritic cell,dendritic cell,dendritic cell,Immune
+enteroendocrine cell of small intestine,glandular epithelial cell,epithelial cell,Epithelium
+tracheal goblet cell,glandular epithelial cell,epithelial cell,Epithelium
+ciliated columnar cell of tracheobronchial tree,ciliated epithelial cell,epithelial cell,Epithelium
+mucus secreting cell,secretory cell,secretory cell,Epithelium
+granulosa cell,meso-epithelial cell,epithelial cell,Epithelium
+mesenchymal cell,stem cell,stem cell,Stromal
+mononuclear phagocyte,myeloid leukocyte,myeloid leukocyte,Immune
+endothelial cell of venule,endothelial cell,endothelial cell,Endothelium
+large intestine goblet cell,intestinal epithelial cell,epithelial cell,Epithelium
+enterochromaffin-like cell,glandular epithelial cell,epithelial cell,Epithelium
+t follicular helper cell,t cell,t cell,Immune
+type l enteroendocrine cell,glandular epithelial cell,epithelial cell,Epithelium
+kidney epithelial cell,kidney epithelial cell,epithelial cell,Epithelium
+"best4+ intestinal epithelial cell, human",intestinal epithelial cell,epithelial cell,Epithelium
+taste receptor cell,ecto-epithelial cell,epithelial cell,Epithelium
+fibroblast of cardiac tissue,fibroblast,fibroblast,Stromal
+enterocyte of epithelium proper of ileum,intestinal epithelial cell,epithelial cell,Epithelium
+enterocyte of epithelium proper of duodenum,intestinal epithelial cell,epithelial cell,Epithelium
+"activated cd8-positive, alpha-beta t cell",t cell,t cell,Immune
+follicle,follicle,stromal cell,Stromal
+glial cell,glial cell,stromal cell,Stromal
+hepatic stellate cell,fibroblast,fibroblast,Stromal
+transit amplifying cell of small intestine,stem cell,stem cell,Epithelium
+luminal epithelial cell of mammary gland,duct epithelial cell,epithelial cell,Epithelium
+ventricular cardiac muscle cell,contractile cell,contractile cell,Stromal
+thymic fibroblast type 1,fibroblast,fibroblast,Stromal
+thymic fibroblast type 2,fibroblast,fibroblast,Stromal
+"naive thymus-derived cd8-positive, alpha-beta t cell",t cell,t cell,Immune
+neuro-medullary thymic epithelial cell,endo-epithelial cell,epithelial cell,Epithelium
+serous cell of epithelium of trachea,secretory cell,secretory cell,Epithelium
+hematopoietic precursor cell,hematopoietic cell,hematopoietic cell,Immune
+transit amplifying cell of colon,stem cell,stem cell,Epithelium
+myeloid leukocyte,myeloid leukocyte,myeloid leukocyte,Immune
+stromal cell of ovary,stromal cell,stromal cell,Stromal
+blood vessel smooth muscle cell,contractile cell,contractile cell,Stromal
+ovarian surface epithelial cell,epithelial cell,epithelial cell,Epithelium
+pancreatic acinar cell,glandular epithelial cell,epithelial cell,Epithelium
+pancreatic ductal cell,duct epithelial cell,epithelial cell,Epithelium
+pancreatic a cell,glandular epithelial cell,epithelial cell,Epithelium
+type b pancreatic cell,glandular epithelial cell,epithelial cell,Epithelium
+pancreatic d cell,glandular epithelial cell,epithelial cell,Epithelium
+pancreatic stellate cell,fibroblast,fibroblast,Stromal
+pancreatic pp cell,glandular epithelial cell,epithelial cell,Epithelium
+myo-medullary thymic epithelial cell,endo-epithelial cell,epithelial cell,Epithelium
+progenitor cell of mammary luminal epithelium,stem cell,stem cell,Epithelium
+spermatid,male germ cell,male germ cell,Germline
+spermatocyte,male germ cell,male germ cell,Germline
+male germ cell,male germ cell,male germ cell,Germline
+leydig cell,secretory cell,secretory cell,Stromal
+peritubular myoid cell,meso-epithelial cell,epithelial cell,Epithelium
+spermatogonium,male germ cell,male germ cell,Germline
+muscle cell,contractile cell,contractile cell,Stromal
+retina horizontal cell,neuron,neuron,Neural
+hematopoietic cell,hematopoietic cell,hematopoietic cell,Immune
+supporting cell of vestibular epithelium,ecto-epithelial cell,epithelial cell,Epithelium
+vestibular dark cell,vestibular dark cell,epithelial cell,Epithelium
+retinal ganglion cell,neuron,neuron,Neural
+connective tissue cell,connective tissue cell,stromal cell,Stromal
+myometrial cell,contractile cell,contractile cell,Stromal
+interstitial cell of cajal,ecto-epithelial cell,epithelial cell,Epithelium
+enteroendocrine cell,glandular epithelial cell,epithelial cell,Epithelium
+neuron,neuron,neuron,Neural
+enterocyte of epithelium proper of jejunum,intestinal epithelial cell,epithelial cell,Epithelium

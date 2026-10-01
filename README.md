@@ -151,3 +151,132 @@ mm_process_adata_for_sags.py    leave-one-donor-out and per-donor differential
 The notebooks read the count matrices and classification tables written by the
 pipelines above, so they are not runnable from a clone alone; they are published
 as the record of how the reported numbers and panels were produced.
+
+## Instructions for use
+
+The pipelines are written for a SLURM cluster and were run on CentOS Linux 7.9.
+Paths in the config files are absolute paths on the cluster where the work was
+done, so repoint them before running.
+
+1. **Create the environment.** `conda env create -f pacbio/pacbio.yml`, then
+   `conda activate pacbio`. SQANTI3 is installed separately; the manuscript used
+   SQANTI3 v6.0.1.
+2. **List your samples.** Write a CSV with columns `tissue,hifi_dir`, one row per
+   sample. `tissue` is the sample identifier used in every output path, and
+   `hifi_dir` is the directory holding that sample's HiFi BAMs. Every
+   `*.hifi_reads*.bam` in the directory is used, excluding `*.unassigned.bam`.
+   If a directory holds BAMs for several samples, files ending `_{tissue}.bam`
+   are matched to their own row. See `csvs/hifi_locations.csv` for the format.
+   Write a second CSV, `sample_metadata.csv`, mapping each sample (`tube_id`)
+   to its `donor` and `tissue`.
+3. **Edit `pacbio/config.yaml`.**
+   - `reference_genome`, `reference_gtf`: genome FASTA and GTF (the manuscript
+     used the GENCODE GRCh38.p13 primary assembly and GENCODE v41).
+   - `primer_fasta`: the Kinnex/MAS-Seq primer FASTA.
+   - `hifi_locations_csv`, `sample_metadata_csv`: the two CSVs from step 2.
+   - `work_directory`: where outputs are written.
+   - `cage_peak`, `isoannotlite_script`, `sqanti3_qc_script`,
+     `sqanti3_filter_script`: SQANTI3 data files and scripts.
+   - Per-rule `mem`, `threads`, `time` and `partition`: set these for your
+     cluster.
+4. **Edit the launchers.** In `pacbio_isoseq.sh`, `pacbio_syncronize.sh` and
+   `pacbio_sqanti3.sh`, update the `#SBATCH` lines, the conda activation line
+   and the `cd` path.
+5. **Run the three stages in order**, from `pacbio/`:
+   ```bash
+   sbatch pacbio_isoseq.sh       # per-sample processing: raw HiFi -> Seurat matrices
+   sbatch pacbio_syncronize.sh   # cross-sample identifier harmonization (global re-collapse)
+   sbatch pacbio_sqanti3.sh      # SQANTI3 QC, filtering and IsoAnnotLite
+   ```
+   Each launcher submits one Snakemake driver job, which submits the rule jobs.
+   To see the planned jobs without running anything, run the same `snakemake`
+   command with `-n`.
+6. **Find the outputs.** Per sample, `pigeon/seurat/{tissue}/` holds the gene
+   and isoform count matrices. After harmonization,
+   `recollapsed/seurat/{tissue}/` holds the same matrices with atlas-wide
+   transcript identifiers. These are the inputs to the notebooks in
+   `notebooks_manuscript/01_atlas_construction/`.
+
+For CDKN2A-targeted capture libraries, use `pacbio_xgen/` instead. Run its
+three launchers in order: `pacbio_isoseq_xgen_prep.sh`,
+`pacbio_isoseq_sharded.sh`, then `pacbio_isoseq_xgen_downstream.sh`.
+
+## Reproducing the manuscript
+
+Every notebook in `notebooks_manuscript/` is saved with its outputs, so each
+reported number and figure panel can be checked without re-running anything.
+To re-run notebooks, start from the deposited data:
+
+- **Long-read processed data** on Figshare
+  (https://doi.org/10.6084/m9.figshare.33411454): gene, pbid and ensemblid count
+  objects, pbid-level pigeon and SQANTI3 classification, sample metadata, and
+  per-cell CDKN2A capture calls.
+- **Matched short-read data** from Tabula Sapiens, Gene Expression Omnibus
+  accession GSE306755.
+
+### Setup
+
+```bash
+git clone https://github.com/madhavmantri/tabula_longread.git
+cd tabula_longread
+mkdir -p pacbio/h5ads csvs
+# put the three *_preprocessed.h5ad files from Figshare in pacbio/h5ads/
+# and the other Figshare files (CSVs, GTF, BED) in csvs/
+touch notebooks_manuscript/.notebooks_root
+```
+
+The lookup tables the notebooks read (`csvs/popv_to_ts_celltype_mapping.csv`,
+`csvs/ts_celltypes.csv` and `csvs/transcripts_to_genes_with_biotypes.txt`)
+ship with this repository.
+
+Every notebook starts by walking up the directory tree to the
+`.notebooks_root` marker and changing directory there. This makes relative
+paths such as `./../pacbio/h5ads/` and `./../csvs/` resolve to the folders
+created above. Git cannot track the marker, which is why the `touch` step is
+needed.
+
+### Building the derived objects
+
+```bash
+python notebooks_manuscript/build_from_figshare.py prepare
+# run notebooks_manuscript/01_atlas_construction/01_09_compute_isoform_fraction.ipynb
+python notebooks_manuscript/build_from_figshare.py cdkn2a
+```
+
+- **`prepare`** does two things:
+  - It writes the annotated-only level. This is the ensemblid object restricted
+    to features with an Ensembl transcript identifier, which gives the same
+    145,051 features and 203,311 cells as in the manuscript.
+  - It links the deposited classification tables to the file names the
+    notebooks read.
+  - It writes the per-cell popV predictions, which are stored on the objects.
+  - It derives the ensemblid-level SQANTI3 table from the pbid-level one,
+    keeping the first structure for each transcript. Features without an
+    Ensembl match are identical to the manuscript table. For about 16% of
+    annotated (ENST) features a different structure represents the
+    transcript, because only the atlas structures are deposited, so
+    `04_16` and `06_09` can differ slightly from the manuscript.
+- **`01_09`** adds the isoform-fraction layer to all three isoform levels.
+- **`cdkn2a`** writes the `*_xgen_cdkn2a.h5ad` objects used in
+  `06_senescence/`. Each is its input object restricted to the 155,117 cells of
+  the four capture donors, with the CDKN2A capture calls attached as `xgen_*`
+  columns. The distinct-UMI counts are not deposited and are not rebuilt; only
+  the whole-cell recovery comparison in `06_03` uses them.
+
+The deposited SQANTI3 table renames `ORF_length` to `ORF_genomic_span`,
+because that column holds the genomic span of the CDS, not its length.
+Notebooks that still read `ORF_length` must use `CDS_length` instead.
+
+### Short-read objects
+
+Download the Tabula Sapiens objects from GEO GSE306755 and set
+`DONOR_SR_PATHS` in `01_atlas_construction/01_06_merge_per_donor_shortread.ipynb`
+to the downloaded files. `01_06` writes the merged and long-read-matched
+short-read objects used by `02_01` and `02_03`.
+
+### Running the notebooks
+
+All notebooks can be run. The atlas-construction notebooks (`01_01`–`01_08`, `01_10`)
+start from the pipeline outputs, so they need the raw sequencing data (see Data
+availability in the manuscript). Every other notebook runs from the Figshare and GEO
+data after the steps above, in folder order (`01` → `06`).
